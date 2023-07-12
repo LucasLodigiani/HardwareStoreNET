@@ -11,6 +11,8 @@ namespace Data.Repositories.Interfaces
     {
         Task<User?> FindUserByNameAsync(string username);
 
+        Task<List<User>> GetAllUsersAsync();
+
         Task<Boolean> CheckPasswordAsync(string username, string password);
 
         Task<Boolean> CreateUserAsync(User user);

@@ -21,6 +21,6 @@ namespace Common.Entities
         [JsonIgnore]
         public User? User { get; set; }
 
-        public ICollection<Product> Products { get; set; }
+        public List<Product> Products { get; set; }
     }
 }

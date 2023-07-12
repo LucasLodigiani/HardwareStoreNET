@@ -69,19 +69,19 @@ namespace Services.Implementations
             {
                 return (0, null);
             }
-
-            if (order.UserId != orderUpdateDto.UserId)
+            else if (order.UserId != orderUpdateDto.UserId)
             {
                 //Retornar unauthorized
                 return (2, null);
             }
-
-            if (orderUpdateDto.State == OrderState.Vendido)
+            else if (order.State == OrderState.Vendido)
             {
                 throw new Exception("El pedido ya ha sido vendido, no puede modificarse");
             }
 
             var products = await _productRepository.GetProductsByIdsAsync(orderUpdateDto.ProductsId);
+
+            //TO DO: Arreglar que cuando se modifica un producto dos veces y se agrega el mismo id de producto, se duplica el producto en la orden.
             if (products.Count < 1)
             {
                 throw new Exception("Debes agregar al menos 1 producto para modificar el pedido");
@@ -91,7 +91,8 @@ namespace Services.Implementations
 
 
             _mapper.Map(orderUpdateDto, order);
-            order.Products = products;
+
+            order.Products.AddRange(products);
 
             bool orderUpdated = await _repository.UpdateOrder(order);
 

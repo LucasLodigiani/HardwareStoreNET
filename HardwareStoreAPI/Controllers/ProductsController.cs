@@ -75,5 +75,45 @@ namespace HardwareStoreAPI.Controllers
             }
         }
 
+        [HttpPut]
+        public async Task<IActionResult> EditProduct(ProductDto productDto)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    bool result = await _productService.UpdateProduct(productDto);
+
+                    return NoContent();
+                }
+                else
+                {
+                    var validationErrors = ModelState.Values.SelectMany(v => v.Errors)
+                                               .Select(e => e.ErrorMessage);
+                    return BadRequest(validationErrors);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("id")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            try
+            {
+                bool result = await _productService.DeleteProduct(id);
+
+                return NoContent();
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

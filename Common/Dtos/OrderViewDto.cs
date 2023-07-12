@@ -13,7 +13,7 @@ namespace Common.Dtos
     {
         public int Id { get; set; }
 
-        public OrderState State { get; set; }
+        public string State { get; set; }
 
         public Guid UserId { get; set; }
 

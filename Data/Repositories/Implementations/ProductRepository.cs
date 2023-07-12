@@ -53,5 +53,18 @@ namespace Data.Repositories.Implementations
             return products;
 
         }
+
+        public async Task<Boolean> UpdateProduct(Product product)
+        {
+            _context.Products.Update(product);
+            if(await SaveChangesAsync())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

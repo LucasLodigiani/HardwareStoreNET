@@ -12,6 +12,8 @@ namespace Data.Repositories.Interfaces
 
         Task<int> CreateProduct(Product product);
 
+        Task<Boolean> UpdateProduct(Product product);
+
         Task<Product?> FindProductByNameAsync(string productName);
 
         Task<Product?> FindProductByIdAsync(int productId);

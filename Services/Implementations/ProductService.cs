@@ -62,6 +62,32 @@ namespace Services.Implementations
 
         }
 
-        
+        public async Task<Boolean> UpdateProduct(ProductDto productDto)
+        {
+            Product? product = await _repository.FindProductByIdAsync(productDto.Id);
+            if (product == null)
+            {
+                throw new Exception("No se ha encontrado el producto que deseas modificar");
+            }
+
+            _mapper.Map(productDto, product);
+
+            bool result = await _repository.UpdateProduct(product);
+
+            if(result)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception("Ha ocurrido un error al modificar este producto");
+            }
+
+        }
+
+        public Task<bool> DeleteProduct(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

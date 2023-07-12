@@ -51,5 +51,18 @@ namespace Data.Repositories.Implementations
             }
 
         }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            List<User> users = await _context.Users.ToListAsync();
+            if(users.Count < 1)
+            {
+                throw new Exception("No hay usuarios para listar");
+            }
+            else
+            {
+                return users;
+            }
+        }
     }
 }

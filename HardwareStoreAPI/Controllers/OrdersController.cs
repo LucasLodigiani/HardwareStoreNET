@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace HardwareStoreAPI.Controllers
 {
@@ -20,7 +21,6 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IList<OrderViewDto>>> GetAllOrders()
         {
             try
@@ -41,8 +41,8 @@ namespace HardwareStoreAPI.Controllers
         {
             try
             {
-                User userJwtData = GetUserJWTData();
-                orderModifyDto.UserId = userJwtData.Id;
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                orderModifyDto.UserId = Guid.Parse(userId);
 
                 if (ModelState.IsValid)
                 {
@@ -77,12 +77,14 @@ namespace HardwareStoreAPI.Controllers
         {
             try
             {
-                User userJwtData = GetUserJWTData();
-                orderDto.UserId = userJwtData.Id;
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                orderDto.UserId = Guid.Parse(userId);
 
                 if (ModelState.IsValid)
                 {
                     OrderViewDto newOrder = await _orderService.CreateOrder(orderDto);
+
                     return Ok(newOrder);
                 }
                 else
@@ -98,21 +100,6 @@ namespace HardwareStoreAPI.Controllers
             }
         }
 
-        private User GetUserJWTData()
-        {
-            var token = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-
-            // Decodificar el JWT
-            var handler = new JwtSecurityTokenHandler();
-            var decodedToken = handler.ReadJwtToken(token);
-
-            User user = new User();
-
-            // Acceder a los campos del JWT
-            user.Id = Guid.Parse(decodedToken.Claims.FirstOrDefault(c => c.Type == "sub")?.Value);
-            user.Username = decodedToken.Claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
-            user.Role = decodedToken.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-            return user;
-        }
+        
     }
 }

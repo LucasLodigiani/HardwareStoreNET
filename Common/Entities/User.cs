@@ -20,6 +20,6 @@ namespace Common.Entities
 
         public string Password { get; set; }
 
-        public ICollection<Order> Orders { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

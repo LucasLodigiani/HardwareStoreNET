@@ -15,7 +15,13 @@ namespace Services.Profiles
         {
             CreateMap<RegisterDto, User>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.NewGuid()))
-                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "User")); 
+                .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "User"));
+
+            CreateMap<UserDto, User>();
+
+            CreateMap<User, UserDto>().ReverseMap();
+
+
         }
     }
 }

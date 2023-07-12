@@ -21,7 +21,7 @@ namespace Services.Profiles
 
             CreateMap<OrderViewDto, Order>();
 
-            CreateMap<Order, OrderViewDto>().ReverseMap();
+            CreateMap<Order, OrderViewDto>().ReverseMap().ForMember(dest => dest.State, opt => opt.MapFrom(src => src.State.ToString()));
         }
     }
 }
