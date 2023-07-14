@@ -18,6 +18,10 @@ namespace Common.Dtos
 
         [Required]
         public OrderState State { get; set; }
+
+        [Required]
+        public string PaymentMethod { get; set; }
+
         [JsonIgnore]
         public Guid? UserId { get; set; }
 

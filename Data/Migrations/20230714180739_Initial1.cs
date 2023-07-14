@@ -47,6 +47,7 @@ namespace Data.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     State = table.Column<int>(type: "INTEGER", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "TEXT", nullable: false),
                     UserId = table.Column<Guid>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>

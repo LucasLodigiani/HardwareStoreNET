@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Common.Dtos;
 using Common.Entities;
+using Common.Enums;
 using Data.Repositories.Interfaces;
 using Services.Interfaces;
 using System;
@@ -85,9 +86,25 @@ namespace Services.Implementations
 
         }
 
-        public Task<bool> DeleteProduct(int id)
+        public async Task<bool> DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            //Cambiar el estado del producto a archivado.
+            Product? product = await _repository.FindProductByIdAsync(id);
+            if (product == null)
+            {
+                throw new Exception("No se ha encontrado el producto que deseas eliminar");
+            }
+
+            product.State = ProductState.Archivado;
+
+            bool result = await _repository.UpdateProduct(product);
+
+            if (!result)
+            {
+                throw new Exception("Ha ocurrido un error al eliminar este producto");
+            }
+
+            return true;
         }
     }
 }

@@ -64,5 +64,26 @@ namespace Data.Repositories.Implementations
                 return users;
             }
         }
+
+        public async Task<bool> DeleteUser(User user)
+        {
+            _context.Users.Remove(user);
+
+            return (await SaveChangesAsync());
+        }
+
+        public async Task<User?> FindUserByIdAsync(Guid id)
+        {
+            User? user = await _context.Users.FirstOrDefaultAsync(user => user.Id == id);
+
+            return user;
+        }
+
+        public async Task<Boolean> UpdateUser(User user)
+        {
+            _context.Users.Update(user);
+
+            return (await SaveChangesAsync());
+        }
     }
 }

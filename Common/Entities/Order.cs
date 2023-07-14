@@ -16,6 +16,8 @@ namespace Common.Entities
 
         public OrderState State { get; set; }
 
+        public string PaymentMethod { get; set; }
+
         public Guid UserId { get; set; }
 
         [JsonIgnore]

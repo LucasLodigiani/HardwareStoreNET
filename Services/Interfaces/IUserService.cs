@@ -10,5 +10,12 @@ namespace Services.Interfaces
     public interface IUserService
     {
         Task<IList<UserDto>> GetAllUsers();
+
+        Task<Boolean> UpdateUser(UserDto userDto);
+
+        Task<Boolean> DeleteUser(Guid id);
+
+        Task<UserDto?> GetUserById(Guid id);
+
     }
 }

@@ -22,6 +22,26 @@ namespace Services.Implementations
             _mapper = mapper;
         }
 
+        public async Task<bool> DeleteUser(Guid id)
+        {
+            User? user = await _userRepository.FindUserByIdAsync(id);
+            if (user == null)
+            {
+                return false;
+            }
+
+            bool result = await _userRepository.DeleteUser(user);
+
+            if(result)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception("Ha ocurrido un error al eliminar al usuario");
+            }
+        }
+
         public async Task<IList<UserDto>> GetAllUsers()
         {
             List<User> users = await _userRepository.GetAllUsersAsync();
@@ -29,6 +49,44 @@ namespace Services.Implementations
             List<UserDto> usersDto = _mapper.Map<List<UserDto>>(users);
 
             return usersDto;
+
+        }
+
+        public async Task<UserDto?> GetUserById(Guid id)
+        {
+            User? user = await _userRepository.FindUserByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            UserDto userDto = _mapper.Map<UserDto>(user);
+
+            return userDto;
+
+        }
+
+        public async Task<bool> UpdateUser(UserDto userDto)
+        {
+            User? user = await _userRepository.FindUserByIdAsync(userDto.Id);
+            if (user == null)
+            {
+                return false;
+            }
+
+            _mapper.Map(userDto, user);
+
+            bool result = await _userRepository.UpdateUser(user);
+
+            if (result)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception("Ha ocurrido un error al modificar al usuario");
+            }
+
 
         }
     }

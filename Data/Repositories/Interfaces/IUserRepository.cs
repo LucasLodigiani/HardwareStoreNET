@@ -11,11 +11,17 @@ namespace Data.Repositories.Interfaces
     {
         Task<User?> FindUserByNameAsync(string username);
 
+        Task<User?> FindUserByIdAsync(Guid id);
+
         Task<List<User>> GetAllUsersAsync();
 
         Task<Boolean> CheckPasswordAsync(string username, string password);
 
+        Task<Boolean> UpdateUser(User user);
+
         Task<Boolean> CreateUserAsync(User user);
+
+        Task<Boolean> DeleteUser(User user);
 
     }
 }

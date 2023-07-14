@@ -20,6 +20,9 @@ namespace Common.Dtos
         public User? User { get; set; }
 
         [Required]
+        public string PaymentMethod { get; set; }
+
+        [Required]
         public List<int> ProductsId { get; set; }
     }
 }
