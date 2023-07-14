@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
+using System.Security.Claims;
 
 namespace HardwareStoreAPI.Controllers
 {
@@ -53,10 +54,17 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateProduct(ProductDto productDto)
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 if (ModelState.IsValid)
                 {
                     ProductDto newProduct = await _productService.CreateProduct(productDto);
@@ -76,10 +84,17 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> EditProduct(ProductDto productDto)
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 if (ModelState.IsValid)
                 {
                     bool result = await _productService.UpdateProduct(productDto);
@@ -100,10 +115,17 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpDelete("id")]
+        [Authorize]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if(userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 bool result = await _productService.DeleteProduct(id);
 
                 return NoContent();

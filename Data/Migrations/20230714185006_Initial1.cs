@@ -85,6 +85,11 @@ namespace Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Password", "Role", "Username" },
+                values: new object[] { new Guid("8de18bed-12df-4bc3-9c76-c825418c4be6"), "admin@gmail.com", "Admin1", "Admin", "Admin1" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_OrderProduct_ProductsId",
                 table: "OrderProduct",

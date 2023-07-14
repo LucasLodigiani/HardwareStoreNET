@@ -12,7 +12,9 @@ namespace Services.Interfaces
     {
         Task<OrderViewDto> CreateOrder(OrderCreateDto orderDto);
 
-        Task<(int, OrderViewDto?)> UpdateOrder(OrderUpdateDto orderUpdateDto);
+        Task<Boolean> UpdateOrder(OrderUpdateDto orderUpdateDto);
+
+        Task<OrderViewDto?> GetOrderById(int id, Guid userId);
 
         Task<List<OrderViewDto>> GetAllOrders();
     }

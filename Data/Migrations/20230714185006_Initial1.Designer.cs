@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230714180739_Initial1")]
+    [Migration("20230714185006_Initial1")]
     partial class Initial1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,16 @@ namespace Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8de18bed-12df-4bc3-9c76-c825418c4be6"),
+                            Email = "admin@gmail.com",
+                            Password = "Admin1",
+                            Role = "Admin",
+                            Username = "Admin1"
+                        });
                 });
 
             modelBuilder.Entity("OrderProduct", b =>

@@ -61,18 +61,34 @@ namespace Services.Implementations
 
         }
 
-        public async Task<(int, OrderViewDto?)> UpdateOrder(OrderUpdateDto orderUpdateDto)
+        public async Task<OrderViewDto?> GetOrderById(int id, Guid userId)
         {
-            //TO DO: Filtrar productos que vienen de la db.
+            Order order = await _repository.FindOrderByIdAsync(id);
+            if (order == null)
+            {
+                return null;
+            }
+            else if(order.UserId != userId)
+            {
+                throw new Exception("No estas autorizado para ver este pedido.");
+            }
+
+            OrderViewDto orderView = _mapper.Map<OrderViewDto>(order);
+
+            return orderView;
+
+        }
+
+        public async Task<Boolean> UpdateOrder(OrderUpdateDto orderUpdateDto)
+        {
             Order order = await _repository.FindOrderByIdAsync(orderUpdateDto.Id);
             if(order == null)
             {
-                return (0, null);
+                return false;
             }
             else if (order.UserId != orderUpdateDto.UserId)
             {
-                //Retornar unauthorized
-                return (2, null);
+                throw new Exception("No estas autorizado para modificar este pedido");
             }
             else if (order.State == OrderState.Vendido)
             {
@@ -81,25 +97,21 @@ namespace Services.Implementations
 
             var products = await _productRepository.GetProductsByIdsAsync(orderUpdateDto.ProductsId);
 
-            //TO DO: Arreglar que cuando se modifica un producto dos veces y se agrega el mismo id de producto, se duplica el producto en la orden.
-            if (products.Count < 1)
+            if (products.Count != 0)
             {
-                throw new Exception("Debes agregar al menos 1 producto para modificar el pedido");
+                //Descartar productos que esten pausados o archivados, y los productos que ya esten.
+                products = products.Where(x => x.State == ProductState.Publicado).ToList();
+
+                order.Products.AddRange(products.Except(order.Products));
             }
-            //Descartar productos que esten pausados o archivados.
-            products = products.Where(x => x.State == ProductState.Publicado).ToList();
-
-
+            
             _mapper.Map(orderUpdateDto, order);
-
-            order.Products.AddRange(products);
 
             bool orderUpdated = await _repository.UpdateOrder(order);
 
-            if( orderUpdated )
+            if(orderUpdated)
             {
-                OrderViewDto orderView = _mapper.Map<OrderViewDto>(order);
-                return (1, orderView);
+                return true;
             }
             else
             {
@@ -109,3 +121,4 @@ namespace Services.Implementations
         }
     }
 }
+

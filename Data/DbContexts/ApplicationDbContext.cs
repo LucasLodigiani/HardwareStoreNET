@@ -29,6 +29,16 @@ namespace Data.DbContexts
             .WithMany(p => p.Orders)
             .UsingEntity(j => j.ToTable("OrderProduct"));
 
+            modelBuilder.Entity<User>().HasData(
+            new User
+            {
+                Id = Guid.NewGuid(),
+                Username = "Admin1",
+                Email = "admin@gmail.com",
+                Role = "Admin",
+                Password = "Admin1"
+            });
+
         }
     }
 }

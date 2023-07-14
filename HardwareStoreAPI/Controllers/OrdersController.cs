@@ -21,10 +21,17 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IList<OrderViewDto>>> GetAllOrders()
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 IList<OrderViewDto> orders = await _orderService.GetAllOrders();
 
                 return Ok(orders);
@@ -34,6 +41,29 @@ namespace HardwareStoreAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("id")]
+        [Authorize]
+        public async Task<IActionResult> GetOrderById(int id)
+        {
+            try
+            {
+                var userId = Guid.Parse(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
+
+                OrderViewDto? orderView = await _orderService.GetOrderById(id, userId);
+                if(orderView == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(orderView);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
 
         [HttpPut]
         [Authorize]
@@ -46,16 +76,14 @@ namespace HardwareStoreAPI.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    var (status, order) = await _orderService.UpdateOrder(orderModifyDto);
-                    if(status == 0)
+                    var result = await _orderService.UpdateOrder(orderModifyDto);
+
+                    if(result == false)
                     {
                         return NotFound();
                     }
-                    else if(status == 2)
-                    {
-                        return Unauthorized();
-                    }
-                    return Ok(order);
+
+                    return NoContent();
                 }
                 else
                 {
@@ -78,7 +106,6 @@ namespace HardwareStoreAPI.Controllers
             try
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
                 orderDto.UserId = Guid.Parse(userId);
 
                 if (ModelState.IsValid)

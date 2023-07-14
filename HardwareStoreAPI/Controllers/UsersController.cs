@@ -1,6 +1,8 @@
 ﻿using Common.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Interfaces;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,10 +20,17 @@ namespace HardwareStoreAPI.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IList<UserDto>>> GetUsers()
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 IList<UserDto> userDtos = await _userService.GetAllUsers();
 
                 return Ok(userDtos);
@@ -33,10 +42,17 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 if (id == Guid.Empty)
                 {
                     throw new Exception("No hay nada ingresado en el id");
@@ -59,10 +75,18 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> ModifyUser(UserDto userDto)
         {
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
+
                 if (ModelState.IsValid)
                 {
                     bool result = await _userService.UpdateUser(userDto);
@@ -87,11 +111,18 @@ namespace HardwareStoreAPI.Controllers
         }
 
         [HttpGet("id")]
+        [Authorize]
         public async Task<IActionResult> GetUserById(Guid id)
         {
 
             try
             {
+                var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                if (userRole != "Admin")
+                {
+                    return Forbid();
+                }
+
                 if (id == Guid.Empty)
                 {
                     throw new Exception("No hay nada ingresado en el id");
